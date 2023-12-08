@@ -41,19 +41,19 @@ class Turret implements Comparable<Turret> {
 		 * 열의 합이 가장 큰 포탑을 기준으로 내림차순 4. 행과 열의 합도 같다면 열 값을 기준으로 내림차순
 		 */
 
-		if (this.power == o.power) {
-			if (this.attack == o.attack) {
-				if (this.x + this.y == o.x + o.y) {
-					return o.y - this.y;
-				}
-
-				return (o.x + o.y) - (this.x + this.y);
-			}
-
+		if (this.power != o.power) {
+			return this.power - o.power;
+		}
+		
+		if (this.attack != o.attack) {
 			return o.attack - this.attack;
 		}
-
-		return this.power - o.power;
+		
+		if ((this.x + this.y) != (o.x + o.y)) {
+			return (o.x + o.y) - (this.x + this.y);
+		}
+		
+		return o.y - this.y;
 	}
 }
 
@@ -90,7 +90,7 @@ public class Main {
 		// K번의 턴이 종료된 후 남아있는 포탑 중 가장 강한 포탑의 공격력 출력
 		for (int time = 1; time <= K; time++) {
 			// 포탑이 하나만 있을 경우 종료 (하나 남은 경우 공격할 포탑이 없기 때문)
-			if (isFisnish()) {
+			if (isFinish()) {
 				break;
 			}
 
@@ -98,6 +98,7 @@ public class Main {
 
 			// 1. 공격력이 가장 낮고 높은 포탑 찾기
 			ArrayList<Turret> list = new ArrayList<>();
+			
 			for (int i = 0; i < N; i++) {
 				for (int j = 0; j < M; j++) {
 					if (map[i][j] > 0) {
@@ -126,14 +127,7 @@ public class Main {
 				bomb(start, end);
 			}
 
-			// 3. 포탑 부서짐 -> 공격 받아서 공격력이 0이하인 포탑은 0을 넣어줌
-			for (int i = 0; i < N; i++) {
-				for (int j = 0; j < M; j++) {
-					if (map[i][j] < 0) {
-						map[i][j] = 0;
-					}
-				}
-			}
+			// 3. 부서진 포탑(공격 받아서 공격력이 0이하인 포탑)은 신경 쓰지 않아도 됨
 
 			// 4. 포탑정비 -> 공격자가 아님, 공격에 피해입은 포탑 아님, 부서지지 않은 포탑이라면 공격력 1 증가
 			for (int i = 0; i < N; i++) {
@@ -147,6 +141,7 @@ public class Main {
 
 		// 남아있는 포탑 중 가장 강한 포탑의 공격력 출력
 		int max = 0;
+		
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < M; j++) {
 				max = Math.max(max, map[i][j]);
@@ -237,12 +232,8 @@ public class Main {
 
 	// 포탄 공격 -> 매개변수 : 공격자, 공격 대상
 	private static void bomb(Turret start, Turret end) {
-		int power = start.power;
-
-		map[end.x][end.y] -= power;
+		map[end.x][end.y] -= start.power;
 		effect[end.x][end.y] = true;
-
-		power /= 2;
 
 		// 공격 대상의 상하좌우, 대각선 위치의 포탄 공격력 감소
 		for (int i = 0; i < 8; i++) {
@@ -251,14 +242,14 @@ public class Main {
 
 			// 공격자의 위치가 아닌 경우 (공격자는 포탄 공격에 영향 받지 않음)
 			if (!(nx == start.x && ny == start.y)) {
-				map[nx][ny] -= power;
+				map[nx][ny] -= start.power / 2;
 				effect[nx][ny] = true;
 			}
 		}
 	}
 
 	// 남아있는 포탑 개수 세기
-	private static boolean isFisnish() {
+	private static boolean isFinish() {
 		int cnt = 0;
 
 		for (int i = 0; i < N; i++) {
