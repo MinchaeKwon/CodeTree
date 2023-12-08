@@ -48,7 +48,7 @@ public class Main {
         // m년동안 진행
         while (m-- > 0) {  	
         	grow();
-        	breeding(m);
+        	breeding();
         	delete();
         	pick();
         }
@@ -81,7 +81,7 @@ public class Main {
 	}
 	
 	// 나무 번식
-	private static void breeding(int p) {
+	private static void breeding() {
 		int[][] newMap = new int[n][n]; // 번식은 모든 나무에서 동시에 일어나기 때문에 맵을 복사해서 사용
 		
 		for (int i = 0; i < n; i++) {
@@ -133,11 +133,12 @@ public class Main {
 						int nx = i;
 						int ny = j;
 						
+						// k칸만큼 전파
 						for (int s = 0; s < k; s++) {
 							nx += dx[d];
 							ny += dy[d];
 							
-							// 범위를 벗어나거나 빈칸 또는 벽이 있는 경우에는 제초제 전파가 되지 않기 때문에 break
+							// 범위를 벗어나거나 빈칸 또는 벽이 있는 경우에는 나무 개수 셀 필요가 없기 때문에 break
 							if (!checkRange(nx, ny) || map[nx][ny] <= 0) {
 								break;
 							}
