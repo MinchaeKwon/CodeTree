@@ -135,15 +135,15 @@ public class Main {
 	}
 	
 	// 해당 칸에 있는 플레이어 정보 찾음
-		private static Player findPlayer(int x, int y) {
-			for (int i = 0; i < m; i++) {
-				if (players[i].x == x && players[i].y == y) {
-					return players[i];
-				}
+	private static Player findPlayer(int x, int y) {
+		for (int i = 0; i < m; i++) {
+			if (players[i].x == x && players[i].y == y) {
+				return players[i];
 			}
-			
-			return null;
 		}
+
+		return null;
+	}
 	
 	// 플레이어 정보 갱신
 	private static void update(Player update) {
