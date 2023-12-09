@@ -57,7 +57,7 @@ public class Main {
 	static int rx, ry; // 루돌프의 위치
 	
 	static int[][] map; // 산타와 루돌프의 위치 저장 (산타 번호, 루돌프 -1)
-	static Santa[] santaArr;
+	static Santa[] santa;
 	
 	static int[] stun; // 산타가 기절했는지 확인
 	static boolean[] dead; // 산타가 죽었는지 확인
@@ -75,7 +75,7 @@ public class Main {
         D = Integer.parseInt(st.nextToken()); // 산타의 힘
         
         map = new int[N][N];
-        santaArr = new Santa[P + 1];
+        santa = new Santa[P + 1];
         stun = new int[P + 1];
         dead = new boolean[P + 1];
         score = new int[P + 1];
@@ -96,7 +96,7 @@ public class Main {
         	int x = Integer.parseInt(st.nextToken()) - 1;
         	int y = Integer.parseInt(st.nextToken()) - 1;
         	
-        	santaArr[num] = new Santa(x, y);
+        	santa[num] = new Santa(x, y);
         	
         	map[x][y] = num;
         }
@@ -115,7 +115,7 @@ public class Main {
     			}
     			
     			Distance min = new Distance((int) (Math.pow(minX - rx, 2) + Math.pow(minY - ry, 2)), minX, minY);
-    			Distance cur = new Distance((int) (Math.pow(santaArr[i].x - rx, 2) + Math.pow(santaArr[i].y - ry, 2)), santaArr[i].x, santaArr[i].y);
+    			Distance cur = new Distance((int) (Math.pow(santa[i].x - rx, 2) + Math.pow(santa[i].y - ry, 2)), santa[i].x, santa[i].y);
     			
     			if (cur.compareTo(min) < 0) {
     				minX = cur.x;
@@ -166,15 +166,11 @@ public class Main {
 			moveY = -1;
 		}
 		
-		// 루돌프 위치 기억
-		int prevRx = rx;
-		int prevRy = ry;
+		map[rx][ry] = 0; // 기존에 루돌프가 있던 위치는 빈칸으로 만들어줌
 		
 		// 가장 가까운 산타 쪽으로 움직임
 		rx += moveX;
 		ry += moveY;
-		
-		map[prevRx][prevRy] = 0; // 기존에 루돌프가 있던 위치는 빈칸으로 만들어줌
 		
 		// 루돌프가 움직여서 산타와 충돌한 경우
 		if (rx == x && ry == y) {
@@ -211,7 +207,7 @@ public class Main {
 				if (isRange(lastX, lastY)) {
 					// 격자 안인 경우 이전 칸에 있던 산타를 현재 칸으로 옮겨줌
 					map[lastX][lastY] = idx;
-					santaArr[idx] = new Santa(lastX, lastY);
+					santa[idx] = new Santa(lastX, lastY);
 				} else {
 					dead[idx] = true; // 격자 밖을 벗어나는 경우 죽은 표시 해줌
 				}
@@ -223,10 +219,9 @@ public class Main {
 			// 해당 산타 점수 증가시키고 위치 옮김
 			score[id] += C;
 			
-			santaArr[id] = new Santa(firstX, firstY);
-			
 			if (isRange(firstX, firstY)) {
 				map[firstX][firstY] = id;
+				santa[id] = new Santa(firstX, firstY);
 			} else {
 				dead[id] = true;
 			}
@@ -244,13 +239,13 @@ public class Main {
 				continue;
 			}
 			
-			int minDist = (int) (Math.pow(santaArr[i].x - rx, 2) + Math.pow(santaArr[i].y - ry, 2));
+			int minDist = (int) (Math.pow(santa[i].x - rx, 2) + Math.pow(santa[i].y - ry, 2));
 			int moveDir = -1;
 			
 			// 방향 우선순위에 따라 상우하좌 4방향 이동해보면서 루돌프와 가장 가까운 방향 찾음
 			for (int d = 0; d < 4; d++) {
-				int nx = santaArr[i].x + dx[d];
-				int ny = santaArr[i].y + dy[d];
+				int nx = santa[i].x + dx[d];
+				int ny = santa[i].y + dy[d];
 				
 				// 격자 밖이거나 다른 산타가 있는 경우 다음으로 넘어감
 				if (!isRange(nx, ny) || map[nx][ny] > 0) {
@@ -267,8 +262,8 @@ public class Main {
 			
 			if (moveDir != -1) {
 				// 다음 이동위치 구함
-				int nx = santaArr[i].x + dx[moveDir];
-				int ny = santaArr[i].y + dy[moveDir];
+				int nx = santa[i].x + dx[moveDir];
+				int ny = santa[i].y + dy[moveDir];
 				
 				if (nx == rx && ny == ry) { // 이동한 산타가 루돌프와 충돌한 경우
 					stun[i] = 2;
@@ -310,7 +305,7 @@ public class Main {
 							if (isRange(lastX, lastY)) {
 								// 격자 안인 경우 이전 칸에 있던 산타를 현재 칸으로 옮겨줌
 								map[lastX][lastY] = idx;
-								santaArr[idx] = new Santa(lastX, lastY);
+								santa[idx] = new Santa(lastX, lastY);
 							} else {
 								dead[idx] = true; // 격자 밖을 벗어나는 경우 죽은 표시 해줌
 							}
@@ -322,21 +317,21 @@ public class Main {
 						// 해당 산타 점수 증가시키고 위치 옮김
 						score[i] += D;
 						
-						map[santaArr[i].x][santaArr[i].y] = 0;
-						santaArr[i] = new Santa(firstX, firstY);
+						map[santa[i].x][santa[i].y] = 0;
 						
 						if (isRange(firstX, firstY)) {
 							map[firstX][firstY] = i;
+							santa[i] = new Santa(firstX, firstY);
 						} else {
 							dead[i] = true;
 						}
 					}
 					
 				} else { // 충돌하지 않은 경우
-					map[santaArr[i].x][santaArr[i].y] = 0; // 원래 산타가 있던 위치는 빈칸으로 만듦
+					map[santa[i].x][santa[i].y] = 0; // 원래 산타가 있던 위치는 빈칸으로 만듦
 					
 					// 해당 산타 위치 갱신
-					santaArr[i] = new Santa(nx, ny);
+					santa[i] = new Santa(nx, ny);
 					map[nx][ny] = i;
 				}
 				
