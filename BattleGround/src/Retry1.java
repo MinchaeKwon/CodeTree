@@ -90,6 +90,7 @@ public class Retry1 {
         }
 	}
 
+	// 모든 플레이어 한 칸씩 이동
 	private static void play() {
 		for (int i = 1; i <= m; i++) {
 			Player p = players[i];
@@ -97,6 +98,7 @@ public class Retry1 {
 			int nx = p.x + dx[p.d];
 			int ny = p.y + dy[p.d];
 			
+			// 격자를 벗어나는 경우 정반대 방향으로 이동
 			if (!isRange(nx, ny)) {
 				p.d = (p.d + 2) % 4;
 				
@@ -104,7 +106,7 @@ public class Retry1 {
 				ny = p.y + dy[p.d];
 			}
 			
-			Player next = findPlayer(nx, ny); // 플레이어가 이동한 칸에 있는 플레이어 구함
+			Player next = findPlayer(nx, ny); // 플레이어가 이동할 칸에 있는 플레이어 구함
 			
 			// 현재 플레이어 위치 갱신
 			p.x = nx;
@@ -118,6 +120,7 @@ public class Retry1 {
 		}
 	}
 	
+	// 해당 칸에 있는 플레이어 구함
 	private static Player findPlayer(int x, int y) {
 		for (int i = 1; i <= m; i++) {
 			Player p = players[i];
@@ -130,19 +133,22 @@ public class Retry1 {
 		return null;
 	}
 	
+	// 공격력이 가장 강한 총을 얻음
 	private static void changeGun(Player p) {
+		// 플레이어가 총을 가지고 있는 경우
 		if (p.g > 0) {
-			map[p.x][p.y].add(p.g);	
+			map[p.x][p.y].add(p.g);	// 플레이어가 현재 가지고 있는 총을 맵에 내려놓음
 		}
 		
 		if (!map[p.x][p.y].isEmpty()) {
 			Collections.sort(map[p.x][p.y]);
 			
 			p.g = map[p.x][p.y].get(map[p.x][p.y].size() - 1); // 공격력이 가장 높은 총
-			map[p.x][p.y].remove(map[p.x][p.y].size() - 1);
+			map[p.x][p.y].remove(map[p.x][p.y].size() - 1); // 플레이어가 가져간 총은 맵에서 삭제
 		}
 	}
 	
+	// 두 플레이어가 싸움
 	private static void fight(Player p1, Player p2) {
 		int attack1 = p1.s + p1.g;
 		int attack2 = p2.s + p2.g;
@@ -158,6 +164,7 @@ public class Retry1 {
 		}
 	}
 	
+	// 진 사람 이동
 	private static void lose(Player p) {
 		map[p.x][p.y].add(p.g); // 총을 해당 칸에 내려놓음
 		p.g = 0;
@@ -169,14 +176,16 @@ public class Retry1 {
 			int nx = p.x + dx[nd];
 			int ny = p.y + dy[nd];
 			
+			// 범위 안이고 빈 칸인 경우
 			if (isRange(nx, ny) && findPlayer(nx, ny) == null) {
+				// 플레이어 위치, 방향 갱신
 				p.x = nx;
 				p.y = ny;
 				p.d = nd;
 				
 				changeGun(p);
 				
-				break;
+				break; // 이동했기 때문에 for문 종료
 			}
 		}
 	}
