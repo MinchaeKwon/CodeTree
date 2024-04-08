@@ -22,6 +22,10 @@ public class Retry1 {
 		}
 	}
 	
+	// 상하좌우 (우선순위)
+	static int[] dx = {-1, 1, 0, 0};
+	static int[] dy = {0, 0, -1, 1};
+	
 	static int N, M, K;
 	
 	static int[][] map; // 미로 표시
@@ -93,36 +97,33 @@ public class Retry1 {
 				continue;
 			}
 			
-			if (p.x != end.x) {
-				int nx = p.x;
-				int ny = p.y;
+			// 원래 위치에서 출구까지의 거리가 최소거리
+			int min = Math.abs(p.x - end.x) + Math.abs(p.y - end.y);
+			int dir = -1;
+			
+			// 방향 우선순위에 따라 4방향 확인
+			for (int d = 0; d < 4; d++) {
+				int nx = p.x + dx[d];
+				int ny = p.y + dy[d];
 				
-				nx += nx < end.x ? 1 : -1;
-				
-				if (map[nx][ny] == 0) {
-					p.x = nx;
-					p.y = ny;
-					
-					moveCnt++;
-					
+				if (nx <= 0 || nx > N || ny <= 0 || ny > N || map[nx][ny] > 0) {
 					continue;
+				}
+				
+				int dist = Math.abs(nx - end.x) + Math.abs(ny - end.y);
+				
+				// 한 칸 움직였을 때 최소거리를 발견한다면 해당 방향으로 이동하는 게 최소거리가 됨
+				if (dist < min) {
+					min = dist;
+					dir = d;
 				}
 			}
 			
-			if (p.y != end.y) {
-				int nx = p.x;
-				int ny = p.y;
-				
-				ny += ny < end.y ? 1 : -1;
-				
-				if (map[nx][ny] == 0) {
-					p.x = nx;
-					p.y = ny;
-					
-					moveCnt++;
-					
-					continue;
-				}
+			// 최소거리를 발견한 경우 (발견하지 못하면 이동하지 않음)
+			if (dir != -1) {
+				moveCnt++;
+				p.x += dx[dir];
+				p.y += dy[dir];
 			}
 		}
 	}
