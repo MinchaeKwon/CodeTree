@@ -8,10 +8,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class Retry2 {
@@ -144,20 +141,18 @@ public class Retry2 {
 	
 	// 가고싶은 편의점까지 최단거리가 되는 방향을 구함
 	private static int findDir(Node start, Node end) {
-		Queue<Node> q = new LinkedList<>();
+		PriorityQueue<Node> pq = new PriorityQueue<>();
 		boolean[][] visited = new boolean[n][n];
 		
-		q.add(new Node(start.x, start.y, -1, 0));
+		pq.add(new Node(start.x, start.y, -1, 0));
 		visited[start.x][start.y] = true;
 		
-		ArrayList<Node> list = new ArrayList<>();
-		
-		while (!q.isEmpty()) {
-			Node cur = q.poll();
+		while (!pq.isEmpty()) {
+			Node cur = pq.poll();
 			
 			// 편의점으로 가는 최단거리가 여러 개가 될수도 있음
 			if (cur.isSame(end)) {
-				list.add(cur);
+				return cur.dir;
 			}
 			
 			for (int i = 0; i < 4; i++) {
@@ -168,35 +163,30 @@ public class Retry2 {
 					continue;
 				}
 				
-				q.add(new Node(nx, ny, cur.dir == -1 ? i : cur.dir, cur.dist + 1));
+				pq.add(new Node(nx, ny, cur.dir == -1 ? i : cur.dir, cur.dist + 1));
 				visited[nx][ny] = true;
 			}
 		}
 		
-		if (list.size() > 1) {
-			Collections.sort(list);
-		}
-		
-		Node result = list.get(0);
-		
-		return result.dir;
+		return 0;
 	}
 	
 	private static void moveBasecamp(Node start) {
-		Queue<Node> q = new LinkedList<>();
+		PriorityQueue<Node> pq = new PriorityQueue<>();
 		boolean[][] visited = new boolean[n][n];
 		
-		q.add(new Node(start.x, start.y, 0));
+		pq.add(new Node(start.x, start.y, 0));
 		visited[start.x][start.y] = true;
 		
-		ArrayList<Node> list = new ArrayList<>();
-		
-		while (!q.isEmpty()) {
-			Node cur = q.poll();
+		while (!pq.isEmpty()) {
+			Node cur = pq.poll();
 			
 			// 최단거리가 같은 베이스캠프가 여러 개 있을 수도 있음
 			if (map[cur.x][cur.y] == 1) {
-				list.add(cur);
+				map[cur.x][cur.y] = 2;
+				person[time - 1] = cur;
+				
+				return;
 			}
 			
 			for (int i = 0; i < 4; i++) {
@@ -207,18 +197,10 @@ public class Retry2 {
 					continue;
 				}
 				
-				q.add(new Node(nx, ny, cur.dist + 1));
+				pq.add(new Node(nx, ny, cur.dist + 1));
 				visited[nx][ny] = true;
 			}
 		}
-		
-		if (list.size() > 1) {
-			Collections.sort(list);	
-		}
-		
-		Node base = list.get(0);
-		map[base.x][base.y] = 2;
-		person[time - 1] = base;
 	}
 	
 	// 모든 사람이 편의점에 도착했는지 확인
