@@ -30,10 +30,10 @@ public class Main {
 		@Override
 		public int compareTo(Pair o) {
 			if (this.y == o.y) {
-				return o.x - this.x;
+				return o.x - this.x; // 2. 행을 기준으로 내림차순
 			}
 			
-			return this.y - o.y;
+			return this.y - o.y; // 1. 열을 기준으로 오름차순
 		}
 	}
 	
@@ -49,22 +49,22 @@ public class Main {
 			this.score = score;
 			this.rotate = rotate;
 		}
-
+  
 		@Override
 		public int compareTo(Node o) {
 			if (this.score == o.score) {
 				if (this.rotate == o.rotate) {
 					if (this.y == o.y) {
-						return this.x - o.x;
+						return this.x - o.x; // 4. 행을 기준으로 오름차순
 					}
 					
-					return this.y - o.y;
+					return this.y - o.y; // 3. 열을 기준으로 오름차순
 				}
 				
-				return this.rotate - o.rotate;
+				return this.rotate - o.rotate; // 2. 각도 기준으로 오름차순
 			}
 			
-			return o.score - this.score;
+			return o.score - this.score; // 1. 점수 기준으로 내림차순
 		}
 	}
 	
@@ -75,10 +75,10 @@ public class Main {
 	static int[][] map;
 	static int[][] newMap;
 	
-	static ArrayList<Node> candidate;
+	static ArrayList<Node> candidate; // 후보 중심 좌표 저장
 	
 	static Queue<Integer> bonus;
-	static PriorityQueue<Pair> remove;
+	static PriorityQueue<Pair> remove; // 사라지는 유물 좌표 저장 (우선순위에 따라 유물이 채워지기 때문에 우선순위 큐 사용)
 	
 	static int[] answer;
 
@@ -156,7 +156,7 @@ public class Main {
         }
         
         for (int n : answer) {
-        	// 0이 나오는 경우는 유물을 획득할 수 없어서 중단된 경우 -> 더이상 출력하지 않음
+        	// 0이 나오는 경우는 유물을 획득할 수 없어서 중단된 경우임 -> 더이상 출력하지 않음
         	if (n == 0) {
         		break;
         	}
@@ -198,10 +198,13 @@ public class Main {
 		}
 	}
 	
+	// 상하좌우 인접한 유물 조각 획득
 	private static int bfs(int[][] arr) {
 		boolean[][] visited = new boolean[5][5];
 		Queue<Pair> q = new LinkedList<>();
-		remove = new PriorityQueue<>(); // 사라지는 유물 저장
+		
+		// 사라지는 유물 저장 (bfs 돌릴 때마다 새로 저장)
+		remove = new PriorityQueue<>();
 		
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
@@ -247,6 +250,7 @@ public class Main {
 		return remove.size();
 	}
 	
+	// 사라진 유물 조각 칸에 새로운 유물 채워넣음
 	private static void fillMap() {
 		while (!remove.isEmpty()) {
 			Pair cur = remove.poll();
