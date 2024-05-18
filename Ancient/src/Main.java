@@ -182,13 +182,16 @@ public class Main {
 				int rx = oy;
 				int ry = 3 - ox - 1;
 				
-				if (cnt == 1) { // 90도 회전
+				if (cnt == 1) {
+					// 90도 회전
 					rx = oy;
 					ry = 3 - ox - 1;
-				} else if (cnt == 2) { // 180도 회전
+				} else if (cnt == 2) {
+					// 180도 회전
 					rx = 3 - ox - 1;
 					ry = 3 - oy - 1;
-				} else { // 270도 회
+				} else {
+					// 270도 회전
 					rx = 3 - oy - 1;
 					ry = ox;
 				}
