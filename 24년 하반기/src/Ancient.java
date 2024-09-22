@@ -4,6 +4,8 @@
  *
  * @author minchae
  * @date 2024. 9. 22. 17:24 ~ 18:40
+ * 
+ * 메모리 12MB  시간 153ms
  */
 
 import java.util.*;
